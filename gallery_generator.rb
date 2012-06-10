@@ -35,7 +35,7 @@ module Jekyll
       @images = []
 
       best_image = nil
-      max_size = site.config["gallery_thumb_size"]
+      max_size = 300
       self.process(@name)
       self.read_yaml(File.join(base, "_layouts"), "gallery_page.html")
       self.data["gallery"] = gallery_name
