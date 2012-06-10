@@ -20,9 +20,9 @@ That's what I had to do on OS X. You may need to use different commands.
 
 Copy your image directories into `jekyl-site/photos/`. Here's what my directory structure looks like:
 
-    % ls photos
+    % ls jekyll-site/photos
     best/                   chile_trip/             japan_trip/
-    % ls photos/chile_trip 
+    % ls jekyll-site/photos/chile_trip
     IMG_1039.JPG  IMG_1046.JPG  IMG_1057.JPG  ...
 
 Run `jekyll` and be patient. It can take a while to generate all the thumbnails on the first run. After that, you should have pretty pictures.
