@@ -11,9 +11,9 @@ See [my gallery](http://geoff.greer.fm/photos/) for an example of what it looks 
 
 ### To use
 
-    cp gallery\_generator.rb jekyll-site/\_plugins/
-    cp gallery\_index.html jekyll-site/\_layouts/
-    cp gallery\_page.html jekyll-site/\_layouts/
+    cp gallery_generator.rb jekyll-site/_plugins/
+    cp gallery_index.html jekyll-site/_layouts/
+    cp gallery_page.html jekyll-site/_layouts/
 
 Copy your image directories into `jekyl-site/photos/`. Here's what my directory structure looks like:
 
