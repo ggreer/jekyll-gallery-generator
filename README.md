@@ -1,6 +1,6 @@
 # Gallery Generator
 
-This is a [Jekyll plugin](https://github.com/mojombo/jekyll/wiki/Plugins) that will take directories full of images and generate galleries. It uses [RMagick](http://rmagick.rubyforge.org/) to create thumbnails.
+This is a [Jekyll plugin](https://github.com/mojombo/jekyll/wiki/Plugins) that generates galleries from directories full of images. It uses [RMagick](http://rmagick.rubyforge.org/) to create thumbnails.
 
 This plugin is quite minimalist. It generates galleries with no pagination, no sub-galleries, and no descriptions. [See my gallery](http://geoff.greer.fm/photos/) for an example of what it looks like.
 
