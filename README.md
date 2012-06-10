@@ -7,7 +7,9 @@ This is a [Jekyll plugin](https://github.com/mojombo/jekyll/wiki/Plugins) that w
 ### Install dependencies
 
     brew install imagemagick
-    gem install RMagick
+    sudo gem install RMagick
+
+That's what I had to do on OS X. You may need to use different commands.
 
 ### To use
 
