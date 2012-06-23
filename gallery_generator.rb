@@ -1,5 +1,7 @@
+require 'exifr'
 require 'RMagick'
 include Magick
+
 include FileUtils
 
 $image_extensions = [".png", ".jpg", ".jpeg", ".gif"]
@@ -22,6 +24,11 @@ module Jekyll
       self.read_yaml(File.join(base, "_layouts"), "gallery_index.html")
       self.data["title"] = "Photos"
       self.data["galleries"] = []
+      begin
+        galleries.sort! {|a,b| b.data["date_time"] <=> a.data["date_time"]}
+      rescue Exception => e
+        puts e
+      end
       galleries.each {|gallery| self.data["galleries"].push(gallery.data)}
     end
   end
@@ -70,6 +77,10 @@ module Jekyll
       rescue
       end
       self.data["best_image"] = best_image
+      begin
+        self.data["date_time"] = EXIFR::JPEG.new("#{dir}/#{best_image}").date_time.to_i
+      rescue
+      end
     end
   end
 

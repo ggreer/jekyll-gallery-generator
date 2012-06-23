@@ -9,6 +9,7 @@ This plugin is quite minimalist. It generates galleries with no pagination, no s
 
     brew install imagemagick
     sudo gem install RMagick
+    sudo gem install exifr
 
 That's what I had to do on OS X. You may need to use different commands.
 
@@ -40,4 +41,4 @@ If you want to have a different path than `/photos/`, set `gallery_dir` in your 
       best:
         best_image: snaileo_gonzales.jpg
 
-If you don't set a `best_image` for a gallery, the generator will use the last image. All images and galleries are sorted alphabetically.
+If you don't set a `best_image` for a gallery, the generator will use the last image. All images and galleries are sorted chronologically by the best_image.
