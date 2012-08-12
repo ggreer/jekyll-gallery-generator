@@ -8,7 +8,7 @@ This plugin is quite minimalist. It generates galleries with no pagination, no s
 ### Install dependencies
 
     brew install imagemagick
-    sudo gem install RMagick
+    sudo gem install rmagick
     sudo gem install exifr
 
 That's what I had to do on OS X. You may need to use different commands.
