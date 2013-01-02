@@ -1,6 +1,6 @@
 # Gallery Generator
 
-**Note: I have forked this from [Greer](https://github.com/ggreer/jekyll-gallery-generator), and added support for [Lightbox](http://lokeshdhakar.com/projects/lightbox2/). To use it, follow the instructions [Photo gallery for Jekyll with Lightbox](http://www.garron.me/blog/picture-photo-gallery-jekyll.html)
+**Note: I have forked this from [Greer](https://github.com/ggreer/jekyll-gallery-generator), and added support for [Lightbox](http://lokeshdhakar.com/projects/lightbox2/). To use it, follow the instructions [Photo gallery for Jekyll with Lightbox](http://www.garron.me/blog/picture-photo-gallery-jekyll.html)**
 
 This is a [Jekyll plugin](https://github.com/mojombo/jekyll/wiki/Plugins) that generates galleries from directories full of images. It uses [RMagick](http://rmagick.rubyforge.org/) to create thumbnails.
 
