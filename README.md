@@ -30,15 +30,20 @@ Run `jekyll` and be patient. It can take a while to generate all the thumbnails 
 
 ### Optional
 
-If you want to have a different path than `/photos/`, set `gallery_dir` in your `_config.yml`. You can also set favorite images that get shown on the index page. Here's what my `_config.yml` looks like:
+If you want to have a different path than `/photos/`, set the gallery dir in your `_config.yml`. You can also tweak other settings like the title prefix and thumbnail size. It's also possible to set favorite images that get shown on the index page. Here's what my `_config.yml` looks like:
 
-    gallery_dir: photos
-    galleries:
-      chile_trip:
-        best_image: IMG_1068.JPG
-      japan_trip:
-        best_image: IMG_0690.JPG
-      best:
-        best_image: snaileo_gonzales.jpg
+    gallery:
+      title_prefix: "Photos: "
+      dir: photos
+      galleries:
+        chile_trip:
+          best_image: IMG_1068.JPG
+        japan_trip:
+          best_image: IMG_0690.JPG
+        best:
+          best_image: snaileo_gonzales.jpg
+      thumbnail_size:
+        x: 800
+        y: 800
 
 If you don't set a `best_image` for a gallery, the generator will use the last image. All images and galleries are sorted chronologically by the best_image.

@@ -17,7 +17,7 @@ module Jekyll
     def initialize(site, base, dir, galleries)
       @site = site
       @base = base
-      @dir = dir
+      @dir = "/#{dir}"
       @name = "index.html"
 
       self.process(@name)
@@ -37,16 +37,25 @@ module Jekyll
     def initialize(site, base, dir, gallery_name)
       @site = site
       @base = base
-      @dir = dir
+      @dir = "/#{dir}"
       @name = "index.html"
       @images = []
 
       best_image = nil
-      max_size = 300
+      max_size_x = 400
+      max_size_y = 400
+      begin
+        max_size_x = site.config["gallery"]["thumbnail_size"]["x"]
+      rescue
+      end
+      begin
+        max_size_y = site.config["gallery"]["thumbnail_size"]["y"]
+      rescue
+      end
       self.process(@name)
       self.read_yaml(File.join(base, "_layouts"), "gallery_page.html")
       self.data["gallery"] = gallery_name
-      gallery_title_prefix = site.config["gallery_title_prefix"] || "Photos: "
+      gallery_title_prefix = site.config["gallery"]["title_prefix"] || "Photos: "
       gallery_name = gallery_name.gsub("_", " ").gsub(/\w+/) {|word| word.capitalize}
       self.data["name"] = gallery_name
       self.data["title"] = "#{gallery_title_prefix}#{gallery_name}"
@@ -54,6 +63,7 @@ module Jekyll
 
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       Dir.foreach(dir) do |image|
+        GC.start
         if image.chars.first != "." and image.downcase().end_with?(*$image_extensions)
           @images.push(image)
           best_image = image
@@ -61,7 +71,7 @@ module Jekyll
           if File.file?("#{thumbs_dir}/#{image}") == false or File.mtime("#{dir}/#{image}") > File.mtime("#{thumbs_dir}/#{image}")
             begin
               m_image = ImageList.new("#{dir}/#{image}")
-              m_image.resize_to_fit!(max_size, max_size)
+              m_image.resize_to_fit!(max_size_x, max_size_y)
               puts "Writing thumbnail to #{thumbs_dir}/#{image}"
               m_image.write("#{thumbs_dir}/#{image}")
             rescue
@@ -73,7 +83,7 @@ module Jekyll
       end
       self.data["images"] = @images
       begin
-        best_image = site.config["galleries"][self.data["gallery"]]["best_image"]
+        best_image = site.config["gallery"]["galleries"][self.data["gallery"]]["best_image"]
       rescue
       end
       self.data["best_image"] = best_image
@@ -91,7 +101,7 @@ module Jekyll
       unless site.layouts.key? "gallery_index"
         return
       end
-      dir = site.config["gallery_dir"] || "photos"
+      dir = site.config["gallery"]["dir"] || "photos"
       galleries = []
       begin
         Dir.foreach(dir) do |gallery_dir|
