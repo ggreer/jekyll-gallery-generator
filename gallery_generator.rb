@@ -63,7 +63,6 @@ module Jekyll
 
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       Dir.foreach(dir) do |image|
-        GC.start
         if image.chars.first != "." and image.downcase().end_with?(*$image_extensions)
           @images.push(image)
           best_image = image
@@ -78,6 +77,7 @@ module Jekyll
               puts "error"
               puts $!
             end
+            GC.start
           end
         end
       end
