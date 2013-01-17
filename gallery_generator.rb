@@ -22,10 +22,11 @@ module Jekyll
 
       self.process(@name)
       self.read_yaml(File.join(base, "_layouts"), "gallery_index.html")
-      self.data["title"] = "Photos"
+      self.data["title"] = site.config["gallery"]["title"] || "Photos"
       self.data["galleries"] = []
       begin
-        galleries.sort! {|a,b| b.data["date_time"] <=> a.data["date_time"]}
+        sort_field = site.config["gallery"]["sort_field"] || "date_time"
+        galleries.sort! {|a,b| b.data[sort_field] <=> a.data[sort_field]}
       rescue Exception => e
         puts e
       end
