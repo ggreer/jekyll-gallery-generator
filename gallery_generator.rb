@@ -17,7 +17,7 @@ module Jekyll
     def initialize(site, base, dir, galleries)
       @site = site
       @base = base
-      @dir = "/#{dir}"
+      @dir = dir.gsub("source/", "") 
       @name = "index.html"
 
       self.process(@name)
@@ -38,7 +38,8 @@ module Jekyll
     def initialize(site, base, dir, gallery_name)
       @site = site
       @base = base
-      @dir = "/#{dir}"
+      @dest_dir = dir.gsub("source/", "")
+      @dir = @dest_dir
       @name = "index.html"
       @images = []
 
@@ -60,14 +61,14 @@ module Jekyll
       gallery_name = gallery_name.gsub("_", " ").gsub(/\w+/) {|word| word.capitalize}
       self.data["name"] = gallery_name
       self.data["title"] = "#{gallery_title_prefix}#{gallery_name}"
-      thumbs_dir = "#{site.dest}/#{dir}/thumbs"
+      thumbs_dir = "#{site.dest}/#{@dest_dir}/thumbs"
 
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       Dir.foreach(dir) do |image|
         if image.chars.first != "." and image.downcase().end_with?(*$image_extensions)
           @images.push(image)
           best_image = image
-          @site.static_files << GalleryFile.new(site, base, "#{dir}/thumbs/", image)
+          @site.static_files << GalleryFile.new(site, base, "#{@dest_dir}/thumbs/", image)
           if File.file?("#{thumbs_dir}/#{image}") == false or File.mtime("#{dir}/#{image}") > File.mtime("#{thumbs_dir}/#{image}")
             begin
               m_image = ImageList.new("#{dir}/#{image}")
