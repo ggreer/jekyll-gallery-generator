@@ -46,6 +46,7 @@ module Jekyll
       best_image = nil
       max_size_x = 400
       max_size_y = 400
+      scale_method = site.config["gallery"]["scale_method"] || "fit"
       begin
         max_size_x = site.config["gallery"]["thumbnail_size"]["x"]
       rescue
@@ -72,7 +73,7 @@ module Jekyll
           if File.file?("#{thumbs_dir}/#{image}") == false or File.mtime("#{dir}/#{image}") > File.mtime("#{thumbs_dir}/#{image}")
             begin
               m_image = ImageList.new("#{dir}/#{image}")
-              m_image.resize_to_fit!(max_size_x, max_size_y)
+              m_image.send("resize_to_#{scale_method}!", max_size_x, max_size_y)
               puts "Writing thumbnail to #{thumbs_dir}/#{image}"
               m_image.write("#{thumbs_dir}/#{image}")
             rescue
