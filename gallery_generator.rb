@@ -17,7 +17,7 @@ module Jekyll
     def initialize(site, base, dir, galleries)
       @site = site
       @base = base
-      @dir = "/#{dir}"
+      @dir = dir.gsub("source/", "") 
       @name = "index.html"
 
       self.process(@name)
@@ -38,13 +38,15 @@ module Jekyll
     def initialize(site, base, dir, gallery_name)
       @site = site
       @base = base
-      @dir = "/#{dir}"
+      @dest_dir = dir.gsub("source/", "")
+      @dir = @dest_dir
       @name = "index.html"
       @images = []
 
       best_image = nil
       max_size_x = 400
       max_size_y = 400
+      scale_method = site.config["gallery"]["scale_method"] || "fit"
       begin
         max_size_x = site.config["gallery"]["thumbnail_size"]["x"]
       rescue
@@ -60,18 +62,18 @@ module Jekyll
       gallery_name = gallery_name.gsub("_", " ").gsub(/\w+/) {|word| word.capitalize}
       self.data["name"] = gallery_name
       self.data["title"] = "#{gallery_title_prefix}#{gallery_name}"
-      thumbs_dir = "#{site.dest}/#{dir}/thumbs"
+      thumbs_dir = "#{site.dest}/#{@dest_dir}/thumbs"
 
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       Dir.foreach(dir) do |image|
         if image.chars.first != "." and image.downcase().end_with?(*$image_extensions)
           @images.push(image)
           best_image = image
-          @site.static_files << GalleryFile.new(site, base, "#{dir}/thumbs/", image)
+          @site.static_files << GalleryFile.new(site, base, "#{@dest_dir}/thumbs/", image)
           if File.file?("#{thumbs_dir}/#{image}") == false or File.mtime("#{dir}/#{image}") > File.mtime("#{thumbs_dir}/#{image}")
             begin
               m_image = ImageList.new("#{dir}/#{image}")
-              m_image.resize_to_fit!(max_size_x, max_size_y)
+              m_image.send("resize_to_#{scale_method}!", max_size_x, max_size_y)
               puts "Writing thumbnail to #{thumbs_dir}/#{image}"
               m_image.write("#{thumbs_dir}/#{image}")
             rescue
