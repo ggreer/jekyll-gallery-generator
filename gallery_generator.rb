@@ -140,8 +140,9 @@ module Jekyll
             galleries << gallery
           end
         end
-      rescue
-        puts $!
+      rescue => e
+        puts "Error generating galleries: #{e}"
+        puts e.backtrace
       end
 
       gallery_index = GalleryIndex.new(site, site.source, dir, galleries)
