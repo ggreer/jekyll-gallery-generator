@@ -30,11 +30,17 @@ module Jekyll
       rescue Exception => e
         puts e
       end
-      galleries.each {|gallery| self.data["galleries"].push(gallery.data)}
+      galleries.each {|gallery|
+        unless gallery.hidden
+          self.data["galleries"].push(gallery.data)
+        end
+      }
     end
   end
 
   class GalleryPage < Page
+    attr_reader :hidden
+
     def initialize(site, base, dir, gallery_name)
       @site = site
       @base = base
@@ -42,7 +48,9 @@ module Jekyll
       @dir = @dest_dir
       @name = "index.html"
       @images = []
+      @hidden = false
 
+      config_data = {}
       best_image = nil
       max_size_x = 400
       max_size_y = 400
@@ -55,14 +63,29 @@ module Jekyll
         max_size_y = site.config["gallery"]["thumbnail_size"]["y"]
       rescue
       end
+      begin
+        config_data = site.config["gallery"]["galleries"][gallery_name]
+      rescue
+      end
       self.process(@name)
       self.read_yaml(File.join(base, "_layouts"), "gallery_page.html")
       self.data["gallery"] = gallery_name
       gallery_title_prefix = site.config["gallery"]["title_prefix"] || "Photos: "
       gallery_name = gallery_name.gsub("_", " ").gsub(/\w+/) {|word| word.capitalize}
+      begin
+        gallery_name = config_data["name"] || gallery_name
+      rescue
+      end
       self.data["name"] = gallery_name
       self.data["title"] = "#{gallery_title_prefix}#{gallery_name}"
       thumbs_dir = "#{site.dest}/#{@dest_dir}/thumbs"
+      begin
+        @hidden = config_data["hidden"] || false
+      rescue
+      end
+      if @hidden
+        self.data["sitemap"] = false
+      end
 
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       Dir.foreach(dir) do |image|
@@ -86,7 +109,7 @@ module Jekyll
       end
       self.data["images"] = @images
       begin
-        best_image = site.config["gallery"]["galleries"][self.data["gallery"]]["best_image"]
+        best_image = config_data["best_image"]
       rescue
       end
       self.data["best_image"] = best_image
