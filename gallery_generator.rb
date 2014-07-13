@@ -17,7 +17,7 @@ module Jekyll
     def initialize(site, base, dir, galleries)
       @site = site
       @base = base
-      @dir = dir.gsub("source/", "") 
+      @dir = dir.gsub("source/", "")
       @name = "index.html"
 
       self.process(@name)
