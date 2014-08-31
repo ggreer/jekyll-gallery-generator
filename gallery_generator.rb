@@ -19,19 +19,20 @@ module Jekyll
       @base = base
       @dir = dir.gsub("source/", "")
       @name = "index.html"
+      config = site.config["gallery"] || {}
 
       self.process(@name)
       self.read_yaml(File.join(base, "_layouts"), "gallery_index.html")
-      self.data["title"] = site.config["gallery"]["title"] || "Photos"
+      self.data["title"] = config["title"] || "Photos"
       self.data["galleries"] = []
       begin
-        sort_field = site.config["gallery"]["sort_field"] || "date_time"
+        sort_field = config["sort_field"] || "date_time"
         galleries.sort! {|a,b| b.data[sort_field] <=> a.data[sort_field]}
       rescue Exception => e
         puts "Error sorting galleries: #{e}"
         puts e.backtrace
       end
-      if site.config["gallery"]["sort_reverse"]
+      if config["sort_reverse"]
         galleries.reverse!
       end
       galleries.each {|gallery|
@@ -140,7 +141,8 @@ module Jekyll
       unless site.layouts.key? "gallery_index"
         return
       end
-      dir = site.config["gallery"]["dir"] || "photos"
+      config = site.config["gallery"] || {}
+      dir = config["dir"] || "photos"
       galleries = []
       begin
         Dir.foreach(dir) do |gallery_dir|
