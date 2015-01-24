@@ -6,6 +6,7 @@ include FileUtils
 
 $image_extensions = [".png", ".jpg", ".jpeg", ".gif"]
 
+# TODO: use File.join() everywhere
 module Jekyll
   class GalleryFile < StaticFile
     def write(dest)
@@ -60,6 +61,7 @@ module Jekyll
       best_image = nil
       max_size_x = 400
       max_size_y = 400
+      symlink = config["symlink"] || false
       scale_method = config["scale_method"] || "fit"
       begin
         max_size_x = config["thumbnail_size"]["x"]
@@ -99,6 +101,30 @@ module Jekyll
           @images.push(image)
           best_image = image
           @site.static_files << GalleryFile.new(site, base, "#{@dest_dir}/thumbs/", image)
+          if symlink
+            image_path = File.join(dir, image)
+            link_src = site.in_source_dir(image_path)
+            link_dest = site.in_dest_dir(image_path)
+            # sf = StaticFile.new(site, base, dir, image)
+            gf = GalleryFile.new(site, base, dir, image)
+            @site.static_files = @site.static_files.delete_if { |sf|
+              sf.relative_path == image_path
+            }
+            @site.static_files << gf
+            if File.exists?(link_dest) or File.symlink?(link_dest)
+              if not File.symlink?(link_dest)
+                puts "#{link_dest} exists but is not a symlink. Deleting."
+                File.delete(link_dest)
+              elsif File.readlink(link_dest) != link_src
+                puts "#{link_dest} points to the wrong file. Deleting."
+                File.delete(link_dest)
+              end
+            end
+            if not File.exists?(link_dest) and not File.symlink?(link_dest)
+              puts "Symlinking #{link_src} -> #{link_dest}"
+              File.symlink(link_src, link_dest)
+            end
+          end
           if File.file?("#{thumbs_dir}/#{image}") == false or File.mtime("#{dir}/#{image}") > File.mtime("#{thumbs_dir}/#{image}")
             begin
               m_image = ImageList.new("#{dir}/#{image}")
@@ -123,6 +149,7 @@ module Jekyll
         puts e.backtrace
       end
 
+      site.static_files = @site.static_files
       self.data["images"] = @images
       self.data["best_image"] = gallery_config["best_image"] || best_image
       begin
