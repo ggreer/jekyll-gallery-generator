@@ -105,12 +105,10 @@ module Jekyll
             image_path = File.join(dir, image)
             link_src = site.in_source_dir(image_path)
             link_dest = site.in_dest_dir(image_path)
-            # sf = StaticFile.new(site, base, dir, image)
-            gf = GalleryFile.new(site, base, dir, image)
-            @site.static_files = @site.static_files.delete_if { |sf|
-              sf.relative_path == image_path
+            @site.static_files.delete_if { |sf|
+              sf.relative_path == "/" + image_path
             }
-            @site.static_files << gf
+            @site.static_files << GalleryFile.new(site, base, dir, image)
             if File.exists?(link_dest) or File.symlink?(link_dest)
               if not File.symlink?(link_dest)
                 puts "#{link_dest} exists but is not a symlink. Deleting."
