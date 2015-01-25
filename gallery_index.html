@@ -14,10 +14,10 @@ layout: page
 </style>
 {% for gallery in page.galleries %}
 <div class="gallery-wrapper">
-    <a href="{{ gallery['gallery'] }}">
+    <a href="{{ gallery['gallery'] }}/index.html">
         <img class="gallery-best-image" src="{{ gallery['gallery'] }}/thumbs/{{ gallery['best_image'] }}">
     </a>
-    <h3><a href="{{ gallery['gallery'] }}">{{ gallery["name"] }}</a></h3>
+    <h3><a href="{{ gallery['gallery'] }}/index.html">{{ gallery["name"] }}</a></h3>
     {{ gallery["images"] | size }} images
 </div>
 {% endfor %}
