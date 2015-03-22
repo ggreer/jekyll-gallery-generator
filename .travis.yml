@@ -1,0 +1,10 @@
+language: ruby
+
+rvm:
+- 2.2
+- 1.9.3
+
+before_script: bundle update
+script: "script/test"
+sudo: false
+cache: bundler
