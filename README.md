@@ -4,29 +4,19 @@ This is a [Jekyll plugin](http://jekyllrb.com/docs/plugins/) that generates gall
 
 This plugin is quite minimalist. It generates galleries with no pagination, no sub-galleries, and no descriptions. [See my gallery](http://geoff.greer.fm/photos/) for an example of what it looks like.
 
+[![Build Status](https://travis-ci.org/ggreer/jekyll-gallery-generator.svg?branch=master)](https://travis-ci.org/ggreer/jekyll-gallery-generator)
 
-## Dependencies
-
-* [ImageMagick](http://www.imagemagick.org/)
-* [RMagick](https://github.com/rmagick/rmagick)
-* [exifr](https://github.com/remvee/exifr/)
-
-
-### Install dependencies on OS X
-```bash
-brew install imagemagick
-sudo gem install rmagick exifr
-```
 
 ## Usage
 
-```bash
-cp gallery_generator.rb jekyll-site/_plugins/
-cp gallery_index.html jekyll-site/_layouts/
-cp gallery_page.html jekyll-site/_layouts/
-```
+1. Install the `jekyll-gallery-generator` gem, either by running `gem install jekyll-gallery-generator` or by adding `gem 'jekyll-gallery-generator'` to your `Gemfile` and running `bundle`.
 
-Copy your image directories into `jekyl-site/photos/`. Here's what my directory structure looks like:
+2. Add `jekyll-gallery-generator` to the gems list in your `_config.yml`:
+
+    gems:
+      - jekyll-gallery-generator
+
+3. Copy your image directories into `jekyl-site/photos/`. Here's what my directory structure looks like:
 
 ```bash
 $ ls jekyll-site/photos
@@ -35,7 +25,22 @@ $ ls jekyll-site/photos/chile_trip
 IMG_1039.JPG  IMG_1046.JPG  IMG_1057.JPG
 ```
 
-Run `jekyll` and be patient. It can take a while to generate all the thumbnails on the first run. After that, you should have pretty pictures.
+4. Run `jekyll build` and be patient. It can take a while to generate all the thumbnails on the first run. After that, you should have pretty pictures.
+
+
+## Dependencies
+
+* [ImageMagick](http://www.imagemagick.org/)
+* [RMagick](https://github.com/rmagick/rmagick)
+* [exifr](https://github.com/remvee/exifr/)
+
+### Install dependencies on OS X
+
+```bash
+brew install imagemagick
+sudo gem install rmagick exifr
+```
+
 
 ## Configuration
 
@@ -66,3 +71,11 @@ gallery:
     best:
       best_image: snaileo_gonzales.jpg
 ```
+
+
+## Overriding layouts
+
+If you want to customize the templates used by this generator, copy `gallery_index.html` and `gallery_page.html` to your Jekyll site's `_layouts`:
+
+    cp lib/gallery_index.html jekyll-site/_layouts/
+    cp lib/gallery_page.html jekyll-site/_layouts/
