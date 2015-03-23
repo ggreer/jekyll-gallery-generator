@@ -22,7 +22,11 @@ module Jekyll
       config = site.config["gallery"] || {}
 
       self.process(@name)
-      self.read_yaml(File.join(base, "_layouts"), "gallery_index.html")
+      gallery_index = File.join(base, "_layouts", "gallery_index.html")
+      unless File.exists?(gallery_index)
+        gallery_index = File.join(File.dirname(__FILE__), "gallery_index.html")
+      end
+      self.read_yaml(File.dirname(gallery_index), File.basename(gallery_index))
       self.data["title"] = config["title"] || "Photos"
       self.data["galleries"] = []
       begin
@@ -75,7 +79,11 @@ module Jekyll
       rescue
       end
       self.process(@name)
-      self.read_yaml(File.join(base, "_layouts"), "gallery_page.html")
+      gallery_page = File.join(base, "_layouts", "gallery_page.html")
+      unless File.exists?(gallery_page)
+        gallery_page = File.join(File.dirname(__FILE__), "gallery_page.html")
+      end
+      self.read_yaml(File.dirname(gallery_page), File.basename(gallery_page))
       self.data["gallery"] = gallery_name
       gallery_title_prefix = config["title_prefix"] || "Photos: "
       gallery_name = gallery_name.gsub("_", " ").gsub(/\w+/) {|word| word.capitalize}
