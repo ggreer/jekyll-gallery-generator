@@ -13,11 +13,8 @@ Gem::Specification.new do |spec|
   spec.requirements << "imagemagick, >=v6.9 (needed by RMagick)"
 
   spec.add_runtime_dependency "exifr", "~> 1.2"
-  spec.add_runtime_dependency "RMagick", "~> 2.12"
+  spec.add_runtime_dependency "rmagick", "~> 2.12"
 
   spec.add_development_dependency "jekyll", "~> 2.0"
-  spec.add_development_dependency "jekyll-last-modified-at", "0.3.4"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "rake"
   spec.add_development_dependency "bundler", "~> 1.6"
 end
