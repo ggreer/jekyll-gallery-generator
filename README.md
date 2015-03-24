@@ -8,6 +8,8 @@ This plugin is quite minimalist. It generates galleries with no pagination, no s
 
 [![Build Status](https://travis-ci.org/ggreer/jekyll-gallery-generator.svg?branch=master)](https://travis-ci.org/ggreer/jekyll-gallery-generator)
 
+[![Floobits Status](https://floobits.com/ggreer/jekyll-gallery-generator.svg)](https://floobits.com/ggreer/jekyll-gallery-generator/redirect)
+
 
 ## Usage
 
