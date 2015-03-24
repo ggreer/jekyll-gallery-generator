@@ -13,8 +13,10 @@ This plugin is quite minimalist. It generates galleries with no pagination, no s
 
 2. Add `jekyll-gallery-generator` to the gems list in your `_config.yml`:
 
+
     gems:
       - jekyll-gallery-generator
+
 
 3. Copy your image directories into `jekyl-site/photos/`. Here's what my directory structure looks like:
 
@@ -38,7 +40,7 @@ IMG_1039.JPG  IMG_1046.JPG  IMG_1057.JPG
 
 ```bash
 brew install imagemagick
-sudo gem install rmagick exifr
+gem install rmagick exifr
 ```
 
 
