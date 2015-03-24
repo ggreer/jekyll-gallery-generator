@@ -4,6 +4,8 @@ This is a [Jekyll plugin](http://jekyllrb.com/docs/plugins/) that generates gall
 
 This plugin is quite minimalist. It generates galleries with no pagination, no sub-galleries, and no descriptions. [See my gallery](http://geoff.greer.fm/photos/) for an example of what it looks like.
 
+[![Gem Version](https://img.shields.io/gem/v/jekyll-gallery-generator.svg)](https://rubygems.org/gems/jekyll-gallery-generator)
+
 [![Build Status](https://travis-ci.org/ggreer/jekyll-gallery-generator.svg?branch=master)](https://travis-ci.org/ggreer/jekyll-gallery-generator)
 
 
