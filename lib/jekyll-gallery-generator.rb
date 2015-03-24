@@ -23,10 +23,11 @@ module Jekyll
 
       self.process(@name)
       gallery_index = File.join(base, "_layouts", "gallery_index.html")
-      unless File.exists?(gallery_index)
-        gallery_index = File.join(File.dirname(__FILE__), "gallery_index.html")
+      if File.exists?(gallery_index)
+        self.read_yaml(File.dirname(gallery_index), File.basename(gallery_index))
+      else
+        @data ||= {}
       end
-      self.read_yaml(File.dirname(gallery_index), File.basename(gallery_index))
       self.data["title"] = config["title"] || "Photos"
       self.data["galleries"] = []
       begin
@@ -80,10 +81,11 @@ module Jekyll
       end
       self.process(@name)
       gallery_page = File.join(base, "_layouts", "gallery_page.html")
-      unless File.exists?(gallery_page)
-        gallery_page = File.join(File.dirname(__FILE__), "gallery_page.html")
+      if File.exists?(gallery_page)
+        self.read_yaml(File.dirname(gallery_page), File.basename(gallery_page))
+      else
+        @data ||= {}
       end
-      self.read_yaml(File.dirname(gallery_page), File.basename(gallery_page))
       self.data["gallery"] = gallery_name
       gallery_title_prefix = config["title_prefix"] || "Photos: "
       gallery_name = gallery_name.gsub("_", " ").gsub(/\w+/) {|word| word.capitalize}
@@ -188,9 +190,6 @@ module Jekyll
     safe true
 
     def generate(site)
-      unless site.layouts.key? "gallery_index"
-        return
-      end
       config = site.config["gallery"] || {}
       dir = config["dir"] || "photos"
       galleries = []
