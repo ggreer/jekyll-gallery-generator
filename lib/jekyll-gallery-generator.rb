@@ -13,7 +13,25 @@ module Jekyll
     end
   end
 
-  class GalleryIndex < Page
+  class ReadYamlPage < Page
+    def read_yaml(base, name, opts = {})
+      begin
+        self.content = File.read(File.join(base, name), merged_file_read_opts(opts))
+        if content =~ /\A(---\s*\n.*?\n?)^((---|\.\.\.)\s*$\n?)/m
+          self.content = $POSTMATCH
+          self.data = SafeYAML.load($1)
+        end
+      rescue SyntaxError => e
+        Jekyll.logger.warn "YAML Exception reading #{File.join(base, name)}: #{e.message}"
+      rescue Exception => e
+        Jekyll.logger.warn "Error reading file #{File.join(base, name)}: #{e.message}"
+      end
+
+      self.data ||= {}
+    end
+  end
+
+  class GalleryIndex < ReadYamlPage
     def initialize(site, base, dir, galleries)
       @site = site
       @base = base
@@ -23,11 +41,10 @@ module Jekyll
 
       self.process(@name)
       gallery_index = File.join(base, "_layouts", "gallery_index.html")
-      if File.exists?(gallery_index)
-        self.read_yaml(File.dirname(gallery_index), File.basename(gallery_index))
-      else
-        @data ||= {}
+      unless File.exists?(gallery_index)
+        gallery_index = File.join(File.dirname(__FILE__), "gallery_index.html")
       end
+      self.read_yaml(File.dirname(gallery_index), File.basename(gallery_index))
       self.data["title"] = config["title"] || "Photos"
       self.data["galleries"] = []
       begin
@@ -48,7 +65,7 @@ module Jekyll
     end
   end
 
-  class GalleryPage < Page
+  class GalleryPage < ReadYamlPage
     attr_reader :hidden
 
     def initialize(site, base, dir, gallery_name)
@@ -81,11 +98,10 @@ module Jekyll
       end
       self.process(@name)
       gallery_page = File.join(base, "_layouts", "gallery_page.html")
-      if File.exists?(gallery_page)
-        self.read_yaml(File.dirname(gallery_page), File.basename(gallery_page))
-      else
-        @data ||= {}
+      unless File.exists?(gallery_page)
+        gallery_page = File.join(File.dirname(__FILE__), "gallery_page.html")
       end
+      self.read_yaml(File.dirname(gallery_page), File.basename(gallery_page))
       self.data["gallery"] = gallery_name
       gallery_title_prefix = config["title_prefix"] || "Photos: "
       gallery_name = gallery_name.gsub("_", " ").gsub(/\w+/) {|word| word.capitalize}
