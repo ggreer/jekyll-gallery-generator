@@ -17,7 +17,8 @@ This plugin is quite minimalist. It generates galleries with no pagination, no s
 
 2. Add `jekyll-gallery-generator` to the gems list in your `_config.yml`:
 
-```gems:
+```
+gems:
   - jekyll-gallery-generator
 ```
 
