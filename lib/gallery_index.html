@@ -18,6 +18,6 @@ layout: page
         <img class="gallery-best-image" src="{{ gallery['gallery'] }}/thumbs/{{ gallery['best_image'] }}">
     </a>
     <h3><a href="{{ gallery['gallery'] }}">{{ gallery["name"] }}</a></h3>
-    {{ gallery["images"] | size }} images
+    {{ gallery["images"] | size }} image{% if gallery["images"].size != 1 %}s{% endif %}
 </div>
 {% endfor %}
