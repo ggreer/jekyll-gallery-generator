@@ -209,6 +209,8 @@ module Jekyll
       config = site.config["gallery"] || {}
       dir = config["dir"] || "photos"
       galleries = []
+      original_dir = Dir.getwd
+      Dir.chdir(site.source)
       begin
         Dir.foreach(dir) do |gallery_dir|
           gallery_path = File.join(dir, gallery_dir)
@@ -224,6 +226,7 @@ module Jekyll
         puts "Error generating galleries: #{e}"
         puts e.backtrace
       end
+      Dir.chdir(original_dir)
 
       gallery_index = GalleryIndex.new(site, site.source, dir, galleries)
       gallery_index.render(site.layouts, site.site_payload)
