@@ -22,7 +22,7 @@ gems:
   - jekyll-gallery-generator
 ```
 
-3. Copy your image directories into `jekyl-site/photos/`. Here's what my directory structure looks like:
+3. Copy your image directories into `jekyll-site/photos/`. Here's what my directory structure looks like:
 
 ```bash
 $ ls jekyll-site/photos
