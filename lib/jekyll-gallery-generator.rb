@@ -162,6 +162,7 @@ module Jekyll
         if File.file?(thumb_path) == false or File.mtime(image_path) > File.mtime(thumb_path)
           begin
             m_image = ImageList.new(image_path)
+            m_image.auto_orient!
             m_image.send("resize_to_#{scale_method}!", max_size_x, max_size_y)
             puts "Writing thumbnail to #{thumb_path}"
             m_image.write(thumb_path)
