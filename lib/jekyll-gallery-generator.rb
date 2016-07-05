@@ -6,6 +6,17 @@ include FileUtils
 
 $image_extensions = [".png", ".jpg", ".jpeg", ".gif"]
 
+def get_exif_date_time(image_path)
+  begin
+    return EXIFR::JPEG.new(image_path).date_time.to_i
+  rescue EXIFR::MalformedJPEG
+    puts "No EXIF data in #{image_path}"
+  rescue Exception => e
+    puts "Error reading EXIF date_time for #{image_path}: #{e}"
+  end
+  return 0
+end
+
 module Jekyll
   class GalleryFile < StaticFile
     def write(dest)
@@ -122,7 +133,8 @@ module Jekyll
 
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       date_times = {}
-      Dir.foreach(dir) do |image|
+      entries = Dir.entries(dir)
+      entries.each_with_index do |image, i|
         next if image.chars.first == "."
         next unless image.downcase().end_with?(*$image_extensions)
         @images.push(image)
@@ -130,12 +142,7 @@ module Jekyll
         @site.static_files << GalleryFile.new(site, base, File.join(@dest_dir, "thumbs"), image)
         image_path = File.join(dir, image)
 
-        begin
-          date_times[image] = EXIFR::JPEG.new(image_path).date_time.to_i
-        rescue Exception => e
-          date_times[image] = 0
-          puts "Error getting date_time for #{image}: #{e}"
-        end
+        date_times[image] = get_exif_date_time(image_path)
 
         if symlink
           link_src = site.in_source_dir(image_path)
@@ -167,12 +174,15 @@ module Jekyll
             puts "Writing thumbnail to #{thumb_path}"
             m_image.write(thumb_path)
           rescue e
-            puts "Error generating thumbnail for #{image_path}: #{e}"
+            printf "Error generating thumbnail for #{image_path}: #{e}\r"
             puts e.backtrace
           end
           GC.start
         end
+
+        printf "#{gallery_name} #{i}/#{entries.length} images\r"
       end
+      puts ""
 
       begin
         @images.sort! {|a,b|
@@ -194,12 +204,7 @@ module Jekyll
       self.data["images"] = @images
       self.data["best_image"] = gallery_config["best_image"] || best_image
       best_image_path = File.join(dir.to_s, best_image.to_s)
-      begin
-        self.data["date_time"] = EXIFR::JPEG.new(best_image_path).date_time.to_i
-      rescue Exception => e
-        self.data["date_time"] = 0
-        puts "Error getting date_time for #{best_image_path}: #{e}"
-      end
+      self.data["date_time"] = get_exif_date_time(best_image_path)
     end
   end
 
