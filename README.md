@@ -17,14 +17,14 @@ This plugin is quite minimalist. It generates galleries with no pagination, no s
 
 2. Add `jekyll-gallery-generator` to the gems list in your `_config.yml`:
 
-```
+    ```
 gems:
   - jekyll-gallery-generator
 ```
 
 3. Copy your image directories into `jekyll-site/photos/`. Here's what my directory structure looks like:
 
-```bash
+    ```bash
 $ ls jekyll-site/photos
 best/          chile_trip/  japan_trip/
 $ ls jekyll-site/photos/chile_trip
