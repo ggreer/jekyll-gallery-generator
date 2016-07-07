@@ -182,7 +182,7 @@ module Jekyll
           end
         end
 
-        printf "#{gallery_name} #{i}/#{entries.length} images\r"
+        printf "#{gallery_name} #{i+1}/#{entries.length} images\r"
       end
       puts ""
 
