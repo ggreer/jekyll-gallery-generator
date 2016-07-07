@@ -177,7 +177,9 @@ module Jekyll
             printf "Error generating thumbnail for #{image_path}: #{e}\r"
             puts e.backtrace
           end
-          GC.start
+          if i % 5 == 0
+            GC.start
+          end
         end
 
         printf "#{gallery_name} #{i}/#{entries.length} images\r"
