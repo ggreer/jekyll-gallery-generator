@@ -54,28 +54,27 @@ This plugin reads several config options from `_config.yml`. The following optio
 
 ```yaml
 gallery:
-  # path to the gallery
-  dir: photos
-  # title for gallery index
-  title: "Photos"
-  # title prefix for gallery page. title=title_prefix+gallery_name
-  title_prefix: "Photos: "
-  # field to control sorting of galleries for the index page
-  # (possible values are: title, date_time, best_image)
-  sort_field: "date_time"
-  # sizes for thumbnails
+  dir: photos               # Path to the gallery
+  symlink: false            # false: copy images into _site. true: create symbolic links (saves disk space)
+  title: "Photos"           # Title for gallery index page
+  title_prefix: "Photos: "  # Title prefix for gallery pages. title = title_prefix + gallery_name
+  sort_field: "date_time"   # How to sort galleries on the index page.
+                            # Possible values are: title, date_time, best_image
   thumbnail_size:
-    x: 400
-    y: 400
-  # custom configuration for individual gallery
-  # best_image is image for the index page (defaults to last image)
+    x: 400                  # max width of thumbnails (in pixels)
+    y: 400                  # max height of thumbnails (in pixels)
+  # The following options are for individual galleries.
   galleries:
     chile_trip:
-      best_image: IMG_1068.JPG
+      best_image: IMG_1068.JPG  # The image to show on the gallery index page. Defaults to the last image.
     japan_trip:
       best_image: IMG_0690.JPG
-    best:
+      name: "日本の旅"       # Defaults to directory name, replacing _ with spaces & capitalizing words.
+    awesome_stuff:
       best_image: snaileo_gonzales.jpg
+      sort_reverse: true    # Reverse sort images in gallery.
+    secret_stuff:
+      hidden: true          # Don't show this gallery on the index page. People must guess the URL.
 ```
 
 
