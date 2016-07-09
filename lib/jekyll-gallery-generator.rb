@@ -6,15 +6,14 @@ include FileUtils
 
 $image_extensions = [".png", ".jpg", ".jpeg", ".gif"]
 
-def get_exif_date_time(image_path)
+def get_exif_data(image_path)
   begin
-    return EXIFR::JPEG.new(image_path).date_time.to_i
+    return EXIFR::JPEG.new(image_path)
   rescue EXIFR::MalformedJPEG
     puts "No EXIF data in #{image_path}"
   rescue Exception => e
-    puts "Error reading EXIF date_time for #{image_path}: #{e}"
+    puts "Error reading EXIF data for #{image_path}: #{e}"
   end
-  return 0
 end
 
 module Jekyll
@@ -142,7 +141,13 @@ module Jekyll
         @site.static_files << GalleryFile.new(site, base, File.join(@dest_dir, "thumbs"), image)
         image_path = File.join(dir, image)
 
-        date_times[image] = get_exif_date_time(image_path)
+        exif = get_exif_data(image_path)
+        self.data["exif"][image] = exif
+        begin
+          date_times[image] = exif.date_time.to_i
+        rescue Exception
+          date_times[image] = 0
+        end
 
         if symlink
           link_src = site.in_source_dir(image_path)
@@ -204,13 +209,15 @@ module Jekyll
 
       site.static_files = @site.static_files
       self.data["images"] = @images
-      self.data["best_image"] = gallery_config["best_image"] || best_image
-      best_image_path = File.join(dir.to_s, best_image.to_s)
-      self.data["date_time"] = get_exif_date_time(best_image_path)
-      self.data["image_dimensions"] = @images.map do |image|
-        exif = EXIFR::JPEG.new(File.join(dir, image))
-        { "width" => exif.width, "height" => exif.height }
+      best_image = gallery_config["best_image"] || best_image
+      self.data["best_image"] = best_image
+      if date_times.has_key?(best_image)
+        gallery_date_time = date_times[best_image]
+      else
+        puts "#{gallery_name}: best_image #{best_image} not found!"
+        gallery_date_time = 0
       end
+      self.data["date_time"] = gallery_date_time
     end
   end
 
