@@ -22,9 +22,9 @@ layout: page
 <hr />
 {% for image in page.images %}
     <div class="gallery-image-wrapper">
-        <a name="{{ image }}"></a>
-        <a href="{{ image }}"{% if site.gallery.lightbox %} rel="lightbox[{{ page.gallery }}]"{% endif %}>
-            <img class="gallery-image" src="thumbs/{{ image }}" />
+        <a name="{{ image.name }}"></a>
+        <a href="{{ image.name }}"{% if site.gallery.lightbox %} rel="lightbox[{{ page.gallery }}]"{% endif %}>
+            <img class="gallery-image" src="thumbs/{{ image.name }}" />
         </a>
     </div>
 {% endfor %}
