@@ -207,6 +207,10 @@ module Jekyll
       self.data["best_image"] = gallery_config["best_image"] || best_image
       best_image_path = File.join(dir.to_s, best_image.to_s)
       self.data["date_time"] = get_exif_date_time(best_image_path)
+      self.data["image_dimensions"] = @images.map do |image|
+        exif = EXIFR::JPEG.new(File.join(dir, image))
+        { "width" => exif.width, "height" => exif.height }
+      end
     end
   end
 
