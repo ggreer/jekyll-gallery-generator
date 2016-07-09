@@ -6,17 +6,59 @@ include FileUtils
 
 $image_extensions = [".png", ".jpg", ".jpeg", ".gif"]
 
-def get_exif_data(image_path)
-  begin
-    return EXIFR::JPEG.new(image_path)
-  rescue EXIFR::MalformedJPEG
-    puts "No EXIF data in #{image_path}"
-  rescue Exception => e
-    puts "Error reading EXIF data for #{image_path}: #{e}"
-  end
-end
-
 module Jekyll
+  class GalleryImage
+    include Comparable
+    attr_accessor :name
+    attr_accessor :path
+
+    def initialize(name, base)
+      @name = name
+      @path = File.join(base, name)
+    end
+
+    def <=>(b)
+      return @date_time <=> b.date_time
+    end
+
+    def date_time
+      return @date_time if defined? @date_time
+      begin
+        @date_time = self.exif.date_time.to_i
+      rescue Exception => e
+        @date_time = 0
+      end
+      return @date_time
+    end
+
+    def exif
+      return @exif if defined? @exif
+      @exif = nil
+      begin
+        @exif = EXIFR::JPEG.new(@path)
+      rescue EXIFR::MalformedJPEG
+        puts "No EXIF data in #{@path}"
+      rescue Exception => e
+        puts "Error reading EXIF data for #{@path}: #{e}"
+      end
+      return @exif
+    end
+
+    def to_s
+      return @name
+    end
+
+    def to_liquid
+      # Liquid hates symbol keys. Gotta stringify them
+      return {
+        'name' => @name,
+        'src' => @name,
+        'date_time' => @date_time,
+        'exif' => @exif && @exif.to_hash.collect{|k,v| [k.to_s, v]}.to_h,
+      }
+    end
+  end
+
   class GalleryFile < StaticFile
     def write(dest)
       return false
@@ -134,29 +176,22 @@ module Jekyll
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       date_times = {}
       entries = Dir.entries(dir)
-      entries.each_with_index do |image, i|
-        next if image.chars.first == "."
-        next unless image.downcase().end_with?(*$image_extensions)
+      entries.each_with_index do |name, i|
+        next if name.chars.first == "."
+        next unless name.downcase().end_with?(*$image_extensions)
+        image = GalleryImage.new(name, dir)
         @images.push(image)
-        best_image = image
-        @site.static_files << GalleryFile.new(site, base, File.join(@dest_dir, "thumbs"), image)
-        image_path = File.join(dir, image)
-
-        exif = get_exif_data(image_path)
-        self.data["exif"][image] = exif
-        begin
-          date_times[image] = exif.date_time.to_i
-        rescue Exception
-          date_times[image] = 0
-        end
+        date_times[name] = image.date_time
+        best_image = name
+        @site.static_files << GalleryFile.new(site, base, File.join(@dest_dir, "thumbs"), name)
 
         if symlink
-          link_src = site.in_source_dir(image_path)
-          link_dest = site.in_dest_dir(image_path)
+          link_src = site.in_source_dir(image.path)
+          link_dest = site.in_dest_dir(image.path)
           @site.static_files.delete_if { |sf|
-            sf.relative_path == "/" + image_path
+            sf.relative_path == "/" + image.path
           }
-          @site.static_files << GalleryFile.new(site, base, dir, image)
+          @site.static_files << GalleryFile.new(site, base, dir, name)
           if File.exists?(link_dest) or File.symlink?(link_dest)
             if not File.symlink?(link_dest)
               puts "#{link_dest} exists but is not a symlink. Deleting."
@@ -171,16 +206,16 @@ module Jekyll
             File.symlink(link_src, link_dest)
           end
         end
-        thumb_path = File.join(thumbs_dir, image)
-        if File.file?(thumb_path) == false or File.mtime(image_path) > File.mtime(thumb_path)
+        thumb_path = File.join(thumbs_dir, name)
+        if File.file?(thumb_path) == false or File.mtime(image.path) > File.mtime(thumb_path)
           begin
-            m_image = ImageList.new(image_path)
+            m_image = ImageList.new(image.path)
             m_image.auto_orient!
             m_image.send("resize_to_#{scale_method}!", max_size_x, max_size_y)
             puts "Writing thumbnail to #{thumb_path}"
             m_image.write(thumb_path)
           rescue Exception => e
-            printf "Error generating thumbnail for #{image_path}: #{e}\r"
+            printf "Error generating thumbnail for #{image.path}: #{e}\r"
             puts e.backtrace
           end
           if i % 5 == 0
@@ -193,13 +228,7 @@ module Jekyll
       puts ""
 
       begin
-        @images.sort! {|a,b|
-          if date_times[a] == date_times[b]
-            a <=> b
-          else
-            date_times[a] <=> date_times[b]
-          end
-        }
+        @images.sort!
         if gallery_config["sort_reverse"]
           @images.reverse!
         end
