@@ -96,15 +96,15 @@ module Jekyll
       scale_method = config["scale_method"] || "fit"
       begin
         max_size_x = config["thumbnail_size"]["x"]
-      rescue
+      rescue Exception
       end
       begin
         max_size_y = config["thumbnail_size"]["y"]
-      rescue
+      rescue Exception
       end
       begin
         gallery_config = config["galleries"][gallery_name] || {}
-      rescue
+      rescue Exception
       end
       self.process(@name)
       gallery_page = File.join(base, "_layouts", "gallery_page.html")
@@ -117,19 +117,20 @@ module Jekyll
       gallery_name = gallery_name.gsub(/[_-]/, " ").gsub(/\w+/) {|word| word.capitalize}
       begin
         gallery_name = gallery_config["name"] || gallery_name
-      rescue
+      rescue Exception
       end
       self.data["name"] = gallery_name
       self.data["title"] = "#{gallery_title_prefix}#{gallery_name}"
-      thumbs_dir = File.join(site.dest, @dest_dir, "thumbs")
+      self.data["exif"] = {}
       begin
         @hidden = gallery_config["hidden"] || false
-      rescue
+      rescue Exception
       end
       if @hidden
         self.data["sitemap"] = false
       end
 
+      thumbs_dir = File.join(site.dest, @dest_dir, "thumbs")
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       date_times = {}
       entries = Dir.entries(dir)
@@ -178,7 +179,7 @@ module Jekyll
             m_image.send("resize_to_#{scale_method}!", max_size_x, max_size_y)
             puts "Writing thumbnail to #{thumb_path}"
             m_image.write(thumb_path)
-          rescue e
+          rescue Exception => e
             printf "Error generating thumbnail for #{image_path}: #{e}\r"
             puts e.backtrace
           end
