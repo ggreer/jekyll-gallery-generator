@@ -47,6 +47,11 @@ brew install imagemagick
 gem install rmagick exifr
 ```
 
+### Install dependencies on Ubuntu
+
+```apt install libmagick++-dev
+gem install rmagick exifr
+```
 
 ## Configuration
 
