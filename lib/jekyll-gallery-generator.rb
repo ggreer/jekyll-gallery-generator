@@ -102,7 +102,11 @@ module Jekyll
       self.data["galleries"] = []
       begin
         sort_field = config["sort_field"] || "date_time"
-        galleries.sort! {|a,b| b.data[sort_field] <=> a.data[sort_field]}
+        galleries.sort! {|a,b|
+          cmp = b.data[sort_field] <=> a.data[sort_field]
+          # Tie goes to first alphabetically. The different order (a<=>b) is intentional.
+          return cmp == 0 ? a.data["title"] <=> b.data["title"] : cmp
+        }
       rescue Exception => e
         puts "Error sorting galleries: #{e}"
         puts e.backtrace
