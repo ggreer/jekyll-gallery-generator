@@ -18,7 +18,8 @@ module Jekyll
     end
 
     def <=>(b)
-      return @date_time <=> b.date_time
+      cmp = @date_time <=> b.date_time
+      return cmp == 0 ? @name <=> b.name : cmp
     end
 
     def date_time
