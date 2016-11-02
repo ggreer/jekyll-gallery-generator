@@ -89,3 +89,19 @@ If you want to customize the templates used by this generator, copy `gallery_ind
 
     cp lib/gallery_index.html jekyll-site/_layouts/
     cp lib/gallery_page.html jekyll-site/_layouts/
+
+## Include a gallery as an include
+
+To take a specific gallery and include it in any page, create a `_includes/gallery.html` file and call the specific gallery with this liquid tag: `{% gallery my-gallery %}`
+
+An example `gallery.html` looks like:
+
+```
+{% for image in images %}
+    <div class="gallery-image-wrapper">
+        <a href="{{ image.src }}">
+            <img class="gallery-image" src="{{ image.thumb_src }}" />
+        </a>
+    </div>
+{% endfor %}
+```
