@@ -14,6 +14,7 @@ module Jekyll
 
     def initialize(name, base)
       @name = name
+      @base = base
       @path = File.join(base, name)
     end
 
@@ -53,7 +54,8 @@ module Jekyll
       # Liquid hates symbol keys. Gotta stringify them
       return {
         'name' => @name,
-        'src' => @name,
+        'src' => "/#{@path}",
+        'thumb_src' => "/#{@base}/thumbs/#{@name}",
         'date_time' => @date_time,
         'exif' => @exif && @exif.to_hash.collect{|k,v| [k.to_s, v]}.to_h,
       }
