@@ -1,10 +1,10 @@
 Gem::Specification.new do |spec|
   spec.name        = "jekyll-gallery-generator"
   spec.summary     = "Generate galleries with thumbnails for your Jekyll site."
-  spec.version     = "1.0.4"
-  spec.authors     = ["Geoff Greer"]
+  spec.version     = "1.1"
+  spec.authors     = ["Geoff Greer, Nathan Birrell"]
   spec.email       = "geoff@greer.fm"
-  spec.homepage    = "https://github.com/ggreer/jekyll-gallery-generator"
+  spec.homepage    = "https://github.com/nathanbirrell/jekyll-gallery-generator"
   spec.licenses    = ["Apache-2.0"]
 
   spec.files         = `git ls-files -z`.split("\x0")
