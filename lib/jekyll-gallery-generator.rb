@@ -292,13 +292,13 @@ module Jekyll
     end
   end
 
-  # class GalleryGenerator < Generator
-  #   safe true
-  #
-  #   def generate(site)
-  #     GalleryIndexPage.new(site)
-  #   end
-  # end
+  class GalleryGenerator < Generator
+    safe true
+
+    def generate(site)
+      GalleryIndexPage.new(site)
+    end
+  end
 
   class GalleryLiquidTag < Liquid::Tag
     def initialize(tag_name, text, tokens)
