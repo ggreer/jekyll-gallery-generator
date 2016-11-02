@@ -314,10 +314,7 @@ module Jekyll
 
       if File.directory?(gallery_dir)
         @images = GalleryPage.new(site, gallery_dir, @text)['images']
-
         template = (Liquid::Template.parse template).render('images' => @images)
-
-        puts "gallery_dir= #{gallery_dir}"
       else
         puts "No gallery found for: #{@text}"
       end
