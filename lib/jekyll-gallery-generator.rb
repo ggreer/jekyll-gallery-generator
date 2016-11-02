@@ -127,9 +127,9 @@ module Jekyll
   class GalleryPage < ReadYamlPage
     attr_reader :hidden
 
-    def initialize(site, base, dir, gallery_name)
+    def initialize(site, dir, gallery_name)
       @site = site
-      @base = base
+      @base = site.source
       @dest_dir = dir.gsub("source/", "")
       @dir = @dest_dir
       @name = "index.html"
@@ -155,7 +155,7 @@ module Jekyll
       rescue Exception
       end
       self.process(@name)
-      gallery_page = File.join(base, "_layouts", "gallery_page.html")
+      gallery_page = File.join(@base, "_layouts", "gallery_page.html")
       unless File.exists?(gallery_page)
         gallery_page = File.join(File.dirname(__FILE__), "gallery_page.html")
       end
@@ -188,7 +188,7 @@ module Jekyll
         image = GalleryImage.new(name, dir)
         @images.push(image)
         date_times[name] = image.date_time
-        @site.static_files << GalleryFile.new(site, base, File.join(@dest_dir, "thumbs"), name)
+        @site.static_files << GalleryFile.new(site, @base, File.join(@dest_dir, "thumbs"), name)
 
         if symlink
           link_src = site.in_source_dir(image.path)
@@ -196,7 +196,7 @@ module Jekyll
           @site.static_files.delete_if { |sf|
             sf.relative_path == "/" + image.path
           }
-          @site.static_files << GalleryFile.new(site, base, dir, name)
+          @site.static_files << GalleryFile.new(site, @base, dir, name)
           if File.exists?(link_dest) or File.symlink?(link_dest)
             if not File.symlink?(link_dest)
               puts "#{link_dest} exists but is not a symlink. Deleting."
@@ -260,10 +260,8 @@ module Jekyll
     end
   end
 
-  class GalleryGenerator < Generator
-    safe true
-
-    def generate(site)
+  class GalleryIndexPage
+    def initialize(site)
       config = site.config["gallery"] || {}
       dir = config["dir"] || "photos"
       galleries = []
@@ -273,7 +271,7 @@ module Jekyll
         Dir.foreach(dir) do |gallery_dir|
           gallery_path = File.join(dir, gallery_dir)
           if File.directory?(gallery_path) and gallery_dir.chars.first != "."
-            gallery = GalleryPage.new(site, site.source, gallery_path, gallery_dir)
+            gallery = GalleryPage.new(site, gallery_path, gallery_dir)
             gallery.render(site.layouts, site.site_payload)
             gallery.write(site.dest)
             site.pages << gallery
@@ -289,7 +287,43 @@ module Jekyll
       gallery_index = GalleryIndex.new(site, site.source, dir, galleries)
       gallery_index.render(site.layouts, site.site_payload)
       gallery_index.write(site.dest)
+
       site.pages << gallery_index
     end
   end
+
+  # class GalleryGenerator < Generator
+  #   safe true
+  #
+  #   def generate(site)
+  #     GalleryIndexPage.new(site)
+  #   end
+  # end
+
+  class GalleryLiquidTag < Liquid::Tag
+    def initialize(tag_name, text, tokens)
+      super
+      @text = text.strip
+    end
+    def render(context)
+      site = context.registers[:site]
+      template = File.read File.join Dir.pwd, '_includes', 'gallery.html'
+      galleries_dir = site.config['gallery']['dir'] || 'photos'
+      gallery_dir = "#{galleries_dir}/#{@text}"
+      @images = []
+
+      if File.directory?(gallery_dir)
+        @images = GalleryPage.new(site, gallery_dir, @text)['images']
+
+        template = (Liquid::Template.parse template).render('images' => @images)
+
+        puts "gallery_dir= #{gallery_dir}"
+      else
+        puts "No gallery found for: #{@text}"
+      end
+
+      template
+    end
+  end
+  Liquid::Template.register_tag('gallery', Jekyll::GalleryLiquidTag)
 end
