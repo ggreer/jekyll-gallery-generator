@@ -94,6 +94,8 @@ If you want to customize the templates used by this generator, copy `gallery_ind
 
 To take a specific gallery and include it in any page, create a `_includes/gallery.html` file and call the specific gallery with this liquid tag: `{% gallery my-gallery %}`
 
+Or, pass it in your page's frontmatter using `gallery_name`
+
 An example `gallery.html` looks like:
 
 ```

@@ -307,16 +307,18 @@ module Jekyll
     end
     def render(context)
       site = context.registers[:site]
+      gallery_name = context.registers[:page]['gallery_name'] || @text
       template = File.read File.join Dir.pwd, '_includes', 'gallery.html'
       galleries_dir = site.config['gallery']['dir'] || 'photos'
-      gallery_dir = "#{galleries_dir}/#{@text}"
+      gallery_dir = "#{galleries_dir}/#{gallery_name}"
       @images = []
 
-      if File.directory?(gallery_dir)
-        @images = GalleryPage.new(site, gallery_dir, @text)['images']
+      if File.directory?(gallery_dir) && !gallery_name.empty?
+        @images = GalleryPage.new(site, gallery_dir, gallery_name)['images']
         template = (Liquid::Template.parse template).render('images' => @images)
       else
-        puts "No gallery found for: #{@text}"
+        puts "No gallery found for: #{context.registers[:page]['path']}"
+        puts "Set 'gallery_name' in frontmatter or as an argument to this tag"
       end
 
       template
