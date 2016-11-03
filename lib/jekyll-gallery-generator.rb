@@ -236,6 +236,9 @@ module Jekyll
         @images.sort!
         if gallery_config["sort_reverse"]
           @images.reverse!
+        else
+          # sort by name
+          @images.sort! { |a,b| a.name.downcase <=> b.name.downcase }
         end
       rescue Exception => e
         puts "Error sorting images in gallery #{gallery_name}: #{e}"
