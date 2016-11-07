@@ -263,6 +263,33 @@ module Jekyll
     end
   end
 
+  class Gallery
+    def initialize(site, gallery_name)
+      @gallery_name = gallery_name
+      @dir = site.config["gallery"]["dir"] || "photos"
+      @dir = "_site/#{@dir}/#{@gallery_name}"
+    end
+
+    def getImages
+      @images = []
+
+      unless File.directory?(@dir)
+        puts "Couldn't find gallery by name: #{@dir}"
+        return
+      end
+
+      files = Dir.entries(@dir)
+      files.each_with_index do |name, i|
+        next if name.chars.first == '.'
+        next unless name.downcase.end_with?(*$image_extensions)
+        image = GalleryImage.new(name, @dir)
+        @images.push(image)
+      end
+      
+      @images
+    end
+  end
+
   class GalleryIndexPage
     def initialize(site)
       config = site.config["gallery"] || {}
@@ -317,7 +344,7 @@ module Jekyll
       @images = []
 
       if File.directory?(gallery_dir) && !gallery_name.empty?
-        @images = GalleryPage.new(site, gallery_dir, gallery_name)['images']
+        @images = Gallery.new(site, gallery_name).getImages
         template = (Liquid::Template.parse template).render('images' => @images)
       else
         puts "No gallery found for: #{context.registers[:page]['path']}"
