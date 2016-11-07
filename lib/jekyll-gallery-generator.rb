@@ -94,7 +94,7 @@ module Jekyll
       @name = "index.html"
       config = site.config["gallery"] || {}
 
-      self.process(@name)
+      self.process(@name) # Jekyll method to set 'basename'
       gallery_index = File.join(base, "_layouts", "gallery_index.html")
       unless File.exists?(gallery_index)
         gallery_index = File.join(File.dirname(__FILE__), "gallery_index.html")
@@ -159,7 +159,7 @@ module Jekyll
       rescue Exception
       end
 
-      self.process(@name)
+      self.process(@name) # Jekyll method to set 'basename'
       gallery_page = File.join(@base, "_layouts", "gallery_page.html")
       unless File.exists?(gallery_page)
         gallery_page = File.join(File.dirname(__FILE__), "gallery_page.html")
