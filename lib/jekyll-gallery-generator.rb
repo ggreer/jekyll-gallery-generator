@@ -264,10 +264,13 @@ module Jekyll
   end
 
   class Gallery
+    attr_accessor :images
+
     def initialize(site, gallery_name)
       @gallery_name = gallery_name
       @dir = site.config["gallery"]["dir"] || "photos"
       @dir = "_site/#{@dir}/#{@gallery_name}"
+      @images = self.getImages
     end
 
     def getImages
@@ -275,7 +278,7 @@ module Jekyll
 
       unless File.directory?(@dir)
         puts "Couldn't find gallery by name: #{@dir}"
-        return
+        return @images
       end
 
       files = Dir.entries(@dir)
@@ -285,7 +288,7 @@ module Jekyll
         image = GalleryImage.new(name, @dir)
         @images.push(image)
       end
-      
+
       @images
     end
   end
@@ -344,7 +347,7 @@ module Jekyll
       @images = []
 
       if File.directory?(gallery_dir) && !gallery_name.empty?
-        @images = Gallery.new(site, gallery_name).getImages
+        @images = Gallery.new(site, gallery_name).images
         template = (Liquid::Template.parse template).render('images' => @images)
       else
         puts "No gallery found for: #{context.registers[:page]['path']}"
