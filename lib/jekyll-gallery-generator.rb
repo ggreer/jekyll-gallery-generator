@@ -16,6 +16,9 @@ module Jekyll
       @name = name
       @base = base
       @path = File.join(base, name)
+
+      date_time
+      exif
     end
 
     def <=>(b)
