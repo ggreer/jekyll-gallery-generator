@@ -94,7 +94,7 @@ module Jekyll
       @name = "index.html"
       config = site.config["gallery"] || {}
 
-      self.process(@name)
+      self.process(@name) # Jekyll method to set 'basename'
       gallery_index = File.join(base, "_layouts", "gallery_index.html")
       unless File.exists?(gallery_index)
         gallery_index = File.join(File.dirname(__FILE__), "gallery_index.html")
@@ -130,8 +130,7 @@ module Jekyll
     def initialize(site, dir, gallery_name)
       @site = site
       @base = site.source
-      @dest_dir = dir.gsub("source/", "")
-      @dir = @dest_dir
+      @dir = dir.gsub("source/", "")
       @name = "index.html"
       @images = []
       @hidden = false
@@ -140,45 +139,36 @@ module Jekyll
       gallery_config = {}
       max_size_x = 400
       max_size_y = 400
-      symlink = config["symlink"] || false
-      scale_method = config["scale_method"] || "fit"
-      begin
-        max_size_x = config["thumbnail_size"]["x"]
-      rescue Exception
+
+      scale_method = config['scale_method'] || 'fit'
+
+      if config['thumbnail_size']
+        max_size_x = config["thumbnail_size"]["x"] || max_size_x
+        max_size_y = config["thumbnail_size"]["y"] || max_size_y
       end
-      begin
-        max_size_y = config["thumbnail_size"]["y"]
-      rescue Exception
+
+      if config['galleries']
+        gallery_config = config['galleries'][gallery_name] || {}
       end
-      begin
-        gallery_config = config["galleries"][gallery_name] || {}
-      rescue Exception
-      end
-      self.process(@name)
+
+      @hidden = gallery_config['hidden'] if gallery_config['hidden']
+
+      self.process(@name) # Jekyll method to set 'basename'
+
       gallery_page = File.join(@base, "_layouts", "gallery_page.html")
       unless File.exists?(gallery_page)
         gallery_page = File.join(File.dirname(__FILE__), "gallery_page.html")
       end
       self.read_yaml(File.dirname(gallery_page), File.basename(gallery_page))
-      self.data["gallery"] = gallery_name
-      gallery_title_prefix = config["title_prefix"] || "Photos: "
+
+      gallery_title_prefix = config["title_prefix"] || 'Photos: '
       gallery_name = gallery_name.gsub(/[_-]/, " ").gsub(/\w+/) {|word| word.capitalize}
       begin
         gallery_name = gallery_config["name"] || gallery_name
       rescue Exception
       end
-      self.data["name"] = gallery_name
-      self.data["title"] = "#{gallery_title_prefix}#{gallery_name}"
-      self.data["exif"] = {}
-      begin
-        @hidden = gallery_config["hidden"] || false
-      rescue Exception
-      end
-      if @hidden
-        self.data["sitemap"] = false
-      end
 
-      thumbs_dir = File.join(site.dest, @dest_dir, "thumbs")
+      thumbs_dir = File.join(site.dest, @dir, "thumbs")
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       date_times = {}
       entries = Dir.entries(dir)
@@ -188,29 +178,8 @@ module Jekyll
         image = GalleryImage.new(name, dir)
         @images.push(image)
         date_times[name] = image.date_time
-        @site.static_files << GalleryFile.new(site, @base, File.join(@dest_dir, "thumbs"), name)
+        @site.static_files << GalleryFile.new(site, @base, File.join(@dir, "thumbs"), name)
 
-        if symlink
-          link_src = site.in_source_dir(image.path)
-          link_dest = site.in_dest_dir(image.path)
-          @site.static_files.delete_if { |sf|
-            sf.relative_path == "/" + image.path
-          }
-          @site.static_files << GalleryFile.new(site, @base, dir, name)
-          if File.exists?(link_dest) or File.symlink?(link_dest)
-            if not File.symlink?(link_dest)
-              puts "#{link_dest} exists but is not a symlink. Deleting."
-              File.delete(link_dest)
-            elsif File.readlink(link_dest) != link_src
-              puts "#{link_dest} points to the wrong file. Deleting."
-              File.delete(link_dest)
-            end
-          end
-          if not File.exists?(link_dest) and not File.symlink?(link_dest)
-            puts "Symlinking #{link_src} -> #{link_dest}"
-            File.symlink(link_src, link_dest)
-          end
-        end
         thumb_path = File.join(thumbs_dir, name)
         if File.file?(thumb_path) == false or File.mtime(image.path) > File.mtime(thumb_path)
           begin
@@ -230,7 +199,6 @@ module Jekyll
 
         printf "#{gallery_name} #{i+1}/#{entries.length} images\r"
       end
-      puts ""
 
       begin
         @images.sort!
@@ -245,21 +213,56 @@ module Jekyll
         puts e.backtrace
       end
 
-      site.static_files = @site.static_files
-      self.data["images"] = @images
       best_image = nil
-      if @images.length > 0
-        best_image = @images[0].name
-      end
+      best_image = @images[0].name if @images.length > 0
       best_image = gallery_config["best_image"] || best_image
-      self.data["best_image"] = best_image
+
       if date_times.has_key?(best_image)
         gallery_date_time = date_times[best_image]
       else
         puts "#{gallery_name}: best_image #{best_image} not found!"
         gallery_date_time = 0
       end
+
+      self.data["best_image"] = best_image
+      site.static_files = @site.static_files
+      self.data["gallery"] = gallery_name
+      self.data["images"] = @images
       self.data["date_time"] = gallery_date_time
+      self.data["name"] = gallery_name
+      self.data["title"] = "#{gallery_title_prefix}#{gallery_name}"
+      self.data["exif"] = {}
+      self.data["sitemap"] = false if @hidden
+    end
+  end
+
+  class Gallery
+    attr_accessor :images
+
+    def initialize(site, gallery_name)
+      @gallery_name = gallery_name
+      @dir = site.config["gallery"]["dir"] || "photos"
+      @dir = "_site/#{@dir}/#{@gallery_name}"
+      @images = self.getImages
+    end
+
+    def getImages
+      @images = []
+
+      unless File.directory?(@dir)
+        puts "Couldn't find gallery by name: #{@dir}"
+        return @images
+      end
+
+      files = Dir.entries(@dir)
+      files.each_with_index do |name, i|
+        next if name.chars.first == '.'
+        next unless name.downcase.end_with?(*$image_extensions)
+        image = GalleryImage.new(name, @dir)
+        @images.push(image)
+      end
+
+      @images
     end
   end
 
@@ -317,7 +320,7 @@ module Jekyll
       @images = []
 
       if File.directory?(gallery_dir) && !gallery_name.empty?
-        @images = GalleryPage.new(site, gallery_dir, gallery_name)['images']
+        @images = Gallery.new(site, gallery_name).images
         template = (Liquid::Template.parse template).render('images' => @images)
       else
         puts "No gallery found for: #{context.registers[:page]['path']}"
