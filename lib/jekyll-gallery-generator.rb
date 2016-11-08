@@ -141,22 +141,25 @@ module Jekyll
       max_size_y = 400
 
       scale_method = config['scale_method'] || 'fit'
-
-      puts config.inspect
-
-      if config['thumbnail_size']
-        max_size_x = config["thumbnail_size"]["x"] || max_size_x
-        max_size_y = config["thumbnail_size"]["y"] || max_size_y
+      begin
+        max_size_x = config["thumbnail_size"]["x"]
+      rescue Exception
+      end
+      begin
+        max_size_y = config["thumbnail_size"]["y"]
+      rescue Exception
+      end
+      begin
+        gallery_config = config["galleries"][gallery_name] || {}
+      rescue Exception
       end
 
-      if config['galleries']
-        gallery_config = config['galleries'][gallery_name] || {}
+      begin
+        @hidden = gallery_config["hidden"]
+      rescue Exception
       end
-
-      @hidden = gallery_config['hidden'] if gallery_config['hidden']
 
       self.process(@name) # Jekyll method to set 'basename'
-
       gallery_page = File.join(@base, "_layouts", "gallery_page.html")
       unless File.exists?(gallery_page)
         gallery_page = File.join(File.dirname(__FILE__), "gallery_page.html")
