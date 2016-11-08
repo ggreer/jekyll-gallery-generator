@@ -131,6 +131,7 @@ module Jekyll
       @site = site
       @base = site.source
       @dir = dir.gsub("source/", "")
+      @dest_dir = @dir
       @name = "index.html"
       @images = []
       @hidden = false
@@ -242,19 +243,20 @@ module Jekyll
     def initialize(site, gallery_name)
       @gallery_name = gallery_name
       @dir = site.config["gallery"]["dir"] || "photos"
-      @dir = "_site/#{@dir}/#{@gallery_name}"
+      @dir = "#{@dir}/#{@gallery_name}"
+      @read_dir = "_site/#{@dir}"
       @images = self.getImages
     end
 
     def getImages
       @images = []
 
-      unless File.directory?(@dir)
-        puts "Couldn't find gallery by name: #{@dir}"
+      unless File.directory?(@read_dir)
+        puts "Couldn't find gallery by name: #{@gallery_name}"
         return @images
       end
 
-      files = Dir.entries(@dir)
+      files = Dir.entries(@read_dir)
       files.each_with_index do |name, i|
         next if name.chars.first == '.'
         next unless name.downcase.end_with?(*$image_extensions)
