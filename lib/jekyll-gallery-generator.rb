@@ -130,7 +130,7 @@ module Jekyll
     def initialize(site, dir, gallery_name)
       @site = site
       @base = site.source
-      @dest_dir = dir.gsub("source/", "")
+      @dir = dir.gsub("source/", "")
       @name = "index.html"
       @images = []
       @hidden = false
@@ -141,8 +141,6 @@ module Jekyll
       max_size_y = 400
 
       scale_method = config['scale_method'] || 'fit'
-
-      puts config.inspect
 
       if config['thumbnail_size']
         max_size_x = config["thumbnail_size"]["x"] || max_size_x
@@ -170,7 +168,7 @@ module Jekyll
       rescue Exception
       end
 
-      thumbs_dir = File.join(site.dest, @dest_dir, "thumbs")
+      thumbs_dir = File.join(site.dest, @dir, "thumbs")
       FileUtils.mkdir_p(thumbs_dir, :mode => 0755)
       date_times = {}
       entries = Dir.entries(dir)
@@ -180,7 +178,7 @@ module Jekyll
         image = GalleryImage.new(name, dir)
         @images.push(image)
         date_times[name] = image.date_time
-        @site.static_files << GalleryFile.new(site, @base, File.join(@dest_dir, "thumbs"), name)
+        @site.static_files << GalleryFile.new(site, @base, File.join(@dir, "thumbs"), name)
 
         thumb_path = File.join(thumbs_dir, name)
         if File.file?(thumb_path) == false or File.mtime(image.path) > File.mtime(thumb_path)
@@ -227,7 +225,6 @@ module Jekyll
       end
 
       self.data["best_image"] = best_image
-
       site.static_files = @site.static_files
       self.data["gallery"] = gallery_name
       self.data["images"] = @images
