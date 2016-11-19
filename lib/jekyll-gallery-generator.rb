@@ -293,4 +293,3 @@ module Jekyll
     end
   end
 end
-
