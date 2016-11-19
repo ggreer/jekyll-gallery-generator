@@ -255,6 +255,8 @@ module Jekyll
         gallery_date_time = 0
       end
       self.data["date_time"] = gallery_date_time
+
+      self.data["info"] = gallery_config["info"]
     end
   end
 
@@ -291,3 +293,4 @@ module Jekyll
     end
   end
 end
+
