@@ -256,7 +256,7 @@ module Jekyll
       end
       self.data["date_time"] = gallery_date_time
 
-      self.data["info"] = gallery_config["info"]
+      self.data["info"] = gallery_config["info"] if gallery_config.key?("info")
     end
   end
 
