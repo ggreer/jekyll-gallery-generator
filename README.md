@@ -1,8 +1,10 @@
+**Note: this fork of [ggreer](https://github.com/ggreer/jekyll-gallery-generator)'s plugin adds the ability to include a specific gallery by name onto any page.**
+
 # Gallery Generator
 
 This is a [Jekyll plugin](http://jekyllrb.com/docs/plugins/) that generates galleries from directories full of images. It uses [RMagick](http://rmagick.rubyforge.org/) to create thumbnails.
 
-This plugin is quite minimalist. It generates galleries with no pagination, no sub-galleries, and no descriptions. [See my gallery](http://geoff.greer.fm/photos/) for an example of what it looks like.
+This plugin is quite minimalist. It generates galleries with no pagination, no sub-galleries, and no descriptions.
 
 [![Gem Version](https://img.shields.io/gem/v/jekyll-gallery-generator.svg)](https://rubygems.org/gems/jekyll-gallery-generator)
 
@@ -17,14 +19,14 @@ This plugin is quite minimalist. It generates galleries with no pagination, no s
 
 2. Add `jekyll-gallery-generator` to the gems list in your `_config.yml`:
 
-    ```
+```
 gems:
   - jekyll-gallery-generator
 ```
 
 3. Copy your image directories into `jekyll-site/photos/`. Here's what my directory structure looks like:
 
-    ```bash
+```bash
 $ ls jekyll-site/photos
 best/          chile_trip/  japan_trip/
 $ ls jekyll-site/photos/chile_trip
@@ -33,6 +35,30 @@ IMG_1039.JPG  IMG_1046.JPG  IMG_1057.JPG
 
 4. Run `jekyll build` and be patient. It can take a while to generate all the thumbnails on the first run. After that, you should have pretty pictures.
 
+### Override default layouts
+
+If you want to customize the templates used by this generator, copy `gallery_index.html` and `gallery_page.html` to your Jekyll site's `_layouts`:
+
+    cp lib/gallery_index.html jekyll-site/_layouts/
+    cp lib/gallery_page.html jekyll-site/_layouts/
+
+### Use a gallery as an include
+
+To take a specific gallery and include it in any page, create a `_includes/gallery.html` file and call the specific gallery with this liquid tag: `{% gallery my-gallery %}`
+
+Or, pass it in your page's frontmatter using `gallery_name`
+
+An example `gallery.html` looks like:
+
+```
+{% for image in images %}
+    <div class="gallery-image-wrapper">
+        <a href="{{ image.src }}">
+            <img class="gallery-image" src="{{ image.thumb_src }}" />
+        </a>
+    </div>
+{% endfor %}
+```
 
 ## Dependencies
 
@@ -40,16 +66,19 @@ IMG_1039.JPG  IMG_1046.JPG  IMG_1057.JPG
 * [RMagick](https://github.com/rmagick/rmagick)
 * [exifr](https://github.com/remvee/exifr/)
 
-### Install dependencies on OS X
+### Install dependencies
+
+on OS X
 
 ```bash
 brew install imagemagick
 gem install rmagick exifr
 ```
 
-### Install dependencies on Ubuntu
+on Ubuntu
 
-```apt install libmagick++-dev
+```bash
+apt install libmagick++-dev
 gem install rmagick exifr
 ```
 
@@ -80,30 +109,4 @@ gallery:
       sort_reverse: true    # Reverse sort images in gallery.
     secret_stuff:
       hidden: true          # Don't show this gallery on the index page. People must guess the URL.
-```
-
-
-## Overriding layouts
-
-If you want to customize the templates used by this generator, copy `gallery_index.html` and `gallery_page.html` to your Jekyll site's `_layouts`:
-
-    cp lib/gallery_index.html jekyll-site/_layouts/
-    cp lib/gallery_page.html jekyll-site/_layouts/
-
-## Include a gallery as an include
-
-To take a specific gallery and include it in any page, create a `_includes/gallery.html` file and call the specific gallery with this liquid tag: `{% gallery my-gallery %}`
-
-Or, pass it in your page's frontmatter using `gallery_name`
-
-An example `gallery.html` looks like:
-
-```
-{% for image in images %}
-    <div class="gallery-image-wrapper">
-        <a href="{{ image.src }}">
-            <img class="gallery-image" src="{{ image.thumb_src }}" />
-        </a>
-    </div>
-{% endfor %}
 ```
