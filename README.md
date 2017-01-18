@@ -15,14 +15,10 @@ This plugin is quite minimalist. It generates galleries with no pagination, no s
 
 ## Usage
 
-1. Install the `jekyll-gallery-generator` gem, either by running `gem install jekyll-gallery-generator` or by adding `gem 'jekyll-gallery-generator'` to your `Gemfile` and running `bundle`.
+1. ~~Install the `jekyll-gallery-generator` gem, either by running `gem install jekyll-gallery-generator` or by adding `gem 'jekyll-gallery-generator'` to your `Gemfile` and running `bundle`.~~
+You'll need to install this specific fork [through this repository](http://stackoverflow.com/questions/2577346/how-to-install-gem-from-github-source) for now, until it's integrated into the actual plugin.
 
 2. Add `jekyll-gallery-generator` to the gems list in your `_config.yml`:
-
-```
-gems:
-  - jekyll-gallery-generator
-```
 
 3. Copy your image directories into `jekyll-site/photos/`. Here's what my directory structure looks like:
 
