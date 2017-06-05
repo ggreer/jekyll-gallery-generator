@@ -1,0 +1,97 @@
+---
+layout: page
+---
+<style TYPE="text/css">
+.gallery-index {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: 0px;
+  margin-right: 0px;
+  text-align: center;
+  background-color: #222;
+  min-width: 320px;
+  color: #555;
+}
+
+  .gallery-index a,
+  .gallery-index a:link {
+    color: #aaa;
+    text-decoration: none;
+  }
+  .gallery-index a:visited {
+    color: #777;
+  }
+  .gallery-index a:active {
+    color: #fff;
+  }
+  .gallery-index .gallery-cover-wrapper {
+    display: inline-block;
+    padding: 0;
+    position: relative;
+    max-width: 100%;
+    min-width: 300px;
+    min-height: 300px;
+    text-align: center;
+    height: 400px;
+    margin: 32px;
+  }
+  @media (max-width: 770px) {
+    .gallery.index .gallery-cover-wrapper {
+      margin: 32px;
+      width: 400px;
+    }
+  }
+  @media (min-width: 770px) {
+    .gallery.index .gallery-cover-wrapper {
+      margin: 32px;
+      margin-bottom: 0;
+    }
+  }
+  .gallery-cover-wrapper{
+    display: inline-block;
+    text-align: center;
+    min-width: 300px;
+    min-height: 300px;
+    padding: 0;
+    padding-bottom: 128px;
+    max-width: 100%;
+  }
+  .gallery-index .galery-cover {
+    margin-top: auto;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    max-height: 100%;
+    max-width: 100%;
+  }
+  @media (min-width: 770px)
+  .gallery-cover-wrapper {
+    margin: 32px;
+    margin-bottom: 0;
+  }
+  @media (min-width: 770px) {
+    .gallery-index .gallery-cover {
+      left: -64px;
+      border: 32px #111 solid;
+    }
+  }
+
+  div {
+    display: block;
+  }
+</style>
+
+<div class="gallery-index">
+  {% for gallery in page.galleries %}
+  <div class="gallery-cover-wrapper">
+    <a href="{{ gallery['gallery'] }}">
+      <img class="gallery-cover" src="{{ gallery['gallery'] }}/thumbs/{{ gallery['best_image'] }}">
+    </a>
+    <h3><a href="{{ gallery['gallery'] }}">{{ gallery["name"] }}</a></h3>
+    {{ gallery["images"] | size }} image{% if gallery["images"].size != 1 %}s{% endif %}
+  </div>
+  {% endfor %}
+</div>

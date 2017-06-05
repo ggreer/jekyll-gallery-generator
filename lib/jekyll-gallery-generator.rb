@@ -160,7 +160,7 @@ module Jekyll
       self.read_yaml(File.dirname(gallery_page), File.basename(gallery_page))
       self.data["gallery"] = gallery_name
       gallery_title_prefix = config["title_prefix"] || "Photos: "
-      gallery_name = gallery_name.gsub(/[_-]/, " ").gsub(/\w+/) {|word| word.capitalize}
+      gallery_name = gallery_name.gsub(/[_-]/, " ").gsub(/\w+/) {|word| word}
       begin
         gallery_name = gallery_config["name"] || gallery_name
       rescue Exception

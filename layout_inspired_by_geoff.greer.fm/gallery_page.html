@@ -1,0 +1,74 @@
+---
+layout: page
+---
+<style TYPE="text/css">
+.gallery {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: 0px;
+  margin-right: 0px;
+  text-align: center;
+  background-color: #222;
+  min-width: 320px;
+  color: #555;
+}
+
+  .gallery a,
+  .gallery a:link {
+    color: #aaa;
+    text-decoration: none;
+  }
+  .gallery a:visited {
+    color: #777;
+  }
+  .gallery a:active {
+    color: #fff;
+  }
+  .gallery .gallery-image-wrapper {
+    display: inline-block;
+    padding: 0;
+    position: relative;
+    max-width: 100%;
+    height: 400px;
+  }
+  @media (max-width: 770px) {
+    .gallery .gallery-image-wrapper {
+      width: 100%;
+    }
+  }
+  @media (min-width: 770px) {
+    .gallery .gallery-image-wrapper {
+      margin: 64px;
+      width: 400px;
+    }
+  }
+  .gallery .gallery-image {
+    margin: auto;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    max-height: 100%;
+    max-width: 100%;
+  }
+  @media (min-width: 770px) {
+    .gallery .gallery-image {
+      left: -64px;
+      border: 32px #111 solid;
+    }
+  }
+</style>
+
+<h1><a href="/{{ site.gallery.dir }}">zurück</a></h1>
+<div class="gallery">
+  {% for image in page.images %}
+  <div class="gallery-image-wrapper">
+    <a name="{{ image.name }}"></a>
+    <a href="{{ image.name }}"{% if site.gallery.lightbox %} rel="lightbox[{{ page.gallery }}]"{% endif %}>
+      <img class="gallery-image" src="thumbs/{{ image.name }}" />
+    </a>
+  </div>
+  {% endfor %}
+</div>
