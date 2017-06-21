@@ -191,7 +191,7 @@ module Jekyll
         if symlink
           link_src = site.in_source_dir(image.path)
           link_dest = site.in_dest_dir(image.path)
-          @site.static_files.delete_if { |sf|
+          @site.static_files.delete_if {|sf|
             sf.relative_path == "/" + image.path
           }
           @site.static_files << GalleryFile.new(site, base, dir, name)
@@ -231,7 +231,16 @@ module Jekyll
       puts ""
 
       begin
-        @images.sort!
+        sort_field = gallery_config["sort_field"] || "date_time"
+        if sort_field == "date_time"
+          @images.sort!
+        elsif sort_field == "name"
+          @images.sort! {|a,b| cmp = a.name <=> b.name}
+        else
+          puts "Invalid sort_field for gallery #{gallery_name}: #{sort_field}. Sorting by datetime."
+          @images.sort!
+        end
+
         if gallery_config["sort_reverse"]
           @images.reverse!
         end
