@@ -39,11 +39,14 @@ IMG_1039.JPG  IMG_1046.JPG  IMG_1057.JPG
 * [ImageMagick](http://www.imagemagick.org/)
 * [RMagick](https://github.com/rmagick/rmagick)
 * [exifr](https://github.com/remvee/exifr/)
+* [Ruby](https://www.ruby-lang.org) >= 2.1
 
 ### Install dependencies on OS X
 
 ```bash
-brew install imagemagick
+brew install imagemagick rbenv
+rbenv install 2.4.0
+rbenv global 2.4.0
 gem install rmagick exifr
 ```
 
