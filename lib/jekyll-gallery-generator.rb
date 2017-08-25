@@ -1,4 +1,5 @@
-require 'exifr'
+require 'exifr/jpeg'
+require 'exifr/tiff'
 require 'rmagick'
 include Magick
 
