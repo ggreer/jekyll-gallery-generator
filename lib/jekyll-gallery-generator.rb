@@ -5,7 +5,7 @@ include Magick
 
 include FileUtils
 
-$image_extensions = [".png", ".jpg", ".jpeg", ".gif"]
+$image_extensions = [".png", ".jpg", ".jpeg", ".gif", ".bmp"]
 
 module Jekyll
   class GalleryImage
