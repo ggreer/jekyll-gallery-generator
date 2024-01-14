@@ -7,6 +7,12 @@ include FileUtils
 
 $image_extensions = [".png", ".jpg", ".jpeg", ".gif", ".bmp"]
 
+unless File.respond_to?(:exists?)
+  class << File
+    alias_method :exists?, :exist?
+  end
+end
+
 module Jekyll
   class GalleryImage
     include Comparable
